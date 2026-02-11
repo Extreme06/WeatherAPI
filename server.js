@@ -12,7 +12,6 @@ app.get('/', (_req, res) => {
 })
 
 app.get('/script.js', (_req, res) => {
-	console.log('[request for script.js]')
 	res.sendFile(path.join(import.meta.dirname, 'src', 'script.js'))
 })
 

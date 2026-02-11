@@ -1,5 +1,7 @@
 const inputCity = document.getElementById('inputCity')
 const cityForm = document.getElementById('cityForm')
+const temperature = document.getElementById('temperature')
+const cityParagraph = document.getElementById('cityParagraph')
 
 cityForm.addEventListener('submit', async (e) => {
 	e.preventDefault()
@@ -7,6 +9,10 @@ cityForm.addEventListener('submit', async (e) => {
 	if (!cityName) console.log(cityName)
 
 	const data = await getData(cityName)
+
+	cityParagraph.innerText = data.location.name
+	temperature.innerText = data.current.temp_c
+
 	console.log(data)
 })
 

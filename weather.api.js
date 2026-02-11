@@ -2,6 +2,7 @@ const apiKey = process.env.WEATHER_API_KEY
 const cityCache = new Map()
 // const CITY_CACHE_TTL = 60 * 60 * 1000 // 1h
 const CITY_CACHE_TTL = 60000 // 1min
+const CITY_CACHE_SIZE_LIMIT = 5
 
 export async function getWeather(cityName) {
 	if (cityCache.has(cityName)) {
@@ -24,6 +25,8 @@ export async function getWeather(cityName) {
 		const response = await fetch(url)
 		const data = await response.json()
 
+		if (!response.ok) throw new Error('Failed to fetch')
+
 		// console.log(data)
 
 		console.log(`[${new Date().toISOString()}]: Caching ${cityName} data`)
@@ -32,6 +35,7 @@ export async function getWeather(cityName) {
 			cachedAt: Date.now(),
 		})
 
+		console.log(cityCache.size)
 		return data
 	} catch (errorMessage) {
 		throw new Error(errorMessage)

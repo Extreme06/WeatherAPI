@@ -1,8 +1,11 @@
 const inputCity = document.getElementById('inputCity')
-const submitButton = document.getElementById('submitButton')
+const cityForm = document.getElementById('cityForm')
 
-submitButton.addEventListener('click', async () => {
+cityForm.addEventListener('submit', async (e) => {
+	e.preventDefault()
 	let cityName = encodeURIComponent(inputCity.value.toLowerCase())
+	if (!cityName) console.log(cityName)
+
 	const data = await getData(cityName)
 	console.log(data)
 })

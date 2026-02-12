@@ -2,7 +2,7 @@ const apiKey = process.env.WEATHER_API_KEY
 const cityCache = new Map()
 // const CITY_CACHE_TTL = 60 * 60 * 1000 // 1h
 const CITY_CACHE_TTL = 60000 // 1min
-const CITY_CACHE_SIZE_LIMIT = 5
+const CITY_CACHE_SIZE_LIMIT = 15
 
 export async function getWeather(cityName) {
 	if (cityCache.has(cityName)) {
@@ -20,22 +20,30 @@ export async function getWeather(cityName) {
 		}
 	}
 
+	// if (cachedCity.size > CITY_CACHE_SIZE_LIMIT) cachedCity
+
 	try {
-		const url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${cityName}`
-		const response = await fetch(url)
+		const url = new URL('http://api.weatherapi.com/v1/current.json')
+		url.searchParams.set('key', apiKey)
+		url.searchParams.set('q', cityName)
+		// ;('?key=${apiKey}&q=${cityName}')
+
+		console.log(url.toString())
+
+		const response = await fetch(url.toString())
+		if (!response.ok) throw new Error('Failed to fetch weather data.')
+
 		const data = await response.json()
 
-		if (!response.ok) throw new Error('Failed to fetch')
+		console.log(
+			`[${new Date().toISOString()}]: [${cityCache.size}]Caching data for: [${data.location.name}]`,
+		)
 
-		// console.log(data)
-
-		console.log(`[${new Date().toISOString()}]: Caching ${cityName} data`)
 		cityCache.set(cityName, {
 			...data,
 			cachedAt: Date.now(),
 		})
 
-		console.log(cityCache.size)
 		return data
 	} catch (errorMessage) {
 		throw new Error(errorMessage)

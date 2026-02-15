@@ -1,10 +1,14 @@
 const apiKey = process.env.WEATHER_API_KEY
+const baseURL = process.env.WEATHER_URL.toString()
 const cityCache = new Map()
-// const CITY_CACHE_TTL = 60 * 60 * 1000 // 1h
+
 const CITY_CACHE_TTL = 60000 // 1min
 const CITY_CACHE_SIZE_LIMIT = 15
 
 export async function getWeather(cityName) {
+	cityName = cityName.toLowerCase()
+
+	//check cache for requested data before fetching
 	if (cityCache.has(cityName)) {
 		const cachedCity = cityCache.get(cityName)
 		console.log({ cachedAt: cachedCity.cachedAt })
@@ -15,34 +19,37 @@ export async function getWeather(cityName) {
 			const { cachedAt, ...data } = cachedCity
 
 			return data
-		} else {
-			cityCache.delete(cityName)
-		}
+		} else cityCache.delete(cityName)
 	}
 
-	// if (cachedCity.size > CITY_CACHE_SIZE_LIMIT) cachedCity
+	//check if cache exceeds its limit
+	if (cityCache.size >= CITY_CACHE_SIZE_LIMIT) {
+		const firstKey = map.keys().next().value
+		if (cityCache.delete(firstKey))
+			console.log(
+				`[${Date.now()}]Cache exceeded its limit, sucessfuly cleared ${firstKey}`,
+			)
+	}
 
+	//fetch desired information
 	try {
-		const url = new URL('http://api.weatherapi.com/v1/current.json')
+		const url = new URL(baseURL)
 		url.searchParams.set('key', apiKey)
 		url.searchParams.set('q', cityName)
-		// ;('?key=${apiKey}&q=${cityName}')
-
-		console.log(url.toString())
 
 		const response = await fetch(url.toString())
 		if (!response.ok) throw new Error('Failed to fetch weather data.')
 
 		const data = await response.json()
 
-		console.log(
-			`[${new Date().toISOString()}]: [${cityCache.size}]Caching data for: [${data.location.name}]`,
-		)
-
+		//save information in cache
 		cityCache.set(cityName, {
 			...data,
 			cachedAt: Date.now(),
 		})
+		console.log(
+			`[${new Date().toISOString()}]: [${cityCache.size}]Caching data for: [${data.location.name}]`,
+		)
 
 		return data
 	} catch (errorMessage) {

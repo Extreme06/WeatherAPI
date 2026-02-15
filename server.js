@@ -14,9 +14,8 @@ app.get('/', (_req, res) => {
 app.get('/getWeather', async (req, res) => {
 	try {
 		const city = req.query.city
-		if (!city) {
+		if (!city)
 			return res.status(400).json({ error: 'City parameter is required' })
-		}
 
 		const data = await getWeather(city)
 		res.json(data)

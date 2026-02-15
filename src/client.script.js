@@ -10,6 +10,7 @@ cityForm.addEventListener('submit', async (e) => {
 		alert('Please insert name before submiting')
 		return
 	}
+
 	try {
 		const data = await getData(cityName)
 		cityParagraph.innerText = data.location.name

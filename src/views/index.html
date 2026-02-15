@@ -16,12 +16,9 @@
 			<input type="checkbox" />
 			Check this out
 		</label>
-		<h4 id="cityParagraph" style="margin-bottom: 0px">
-			Name of city will type here
-		</h4>
-		<p style="margin-top: 0px">
-			Temperature : <label id="temperature">x</label>
-		</p>
+		<h4 id="cityParagraph" style="margin-bottom: 0px">City Name</h4>
+		<p class="weatherInfo">Temperature : <label id="temperature">x</label></p>
+		<p class="weatherInfo">Humidity: <label id="humidity">x</label></p>
 	</body>
 	<style>
 		body {
@@ -29,6 +26,10 @@
 		}
 		body > * {
 			color: white;
+		}
+		.weatherInfo {
+			margin-top: 0px;
+			margin-bottom: 0px;
 		}
 	</style>
 </html>

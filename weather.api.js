@@ -1,5 +1,8 @@
 const apiKey = process.env.WEATHER_API_KEY
 const baseURL = process.env.WEATHER_URL.toString()
+
+if (!apiKey || !baseURL) throw new Error('Neuspesna konekcija sa dotenv fajlom')
+
 const cityCache = new Map()
 
 const CITY_CACHE_TTL = 60000 // 1min

@@ -5,6 +5,8 @@ import express from 'express'
 const app = express()
 
 const PORT = process.env.PORT
+if (!PORT) throw new Error('Failed to get value of PORT from DOTENV file')
+
 app.use(express.static(path.join(import.meta.dirname, 'src')))
 
 app.get('/', (_req, res) => {

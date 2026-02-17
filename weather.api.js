@@ -1,7 +1,7 @@
 const apiKey = process.env.WEATHER_API_KEY
 const baseURL = process.env.WEATHER_URL.toString()
 
-if (!apiKey || !baseURL) throw new Error('Neuspesna konekcija sa dotenv fajlom')
+if (!apiKey || !baseURL) throw new Error('Failed connection with dotenv file')
 
 const cityCache = new Map()
 
@@ -27,7 +27,7 @@ export async function getWeather(cityName) {
 
 	//check if cache exceeds its limit
 	if (cityCache.size >= CITY_CACHE_SIZE_LIMIT) {
-		const firstKey = map.keys().next().value
+		const firstKey = cityCache.keys().next().value
 		if (cityCache.delete(firstKey))
 			console.log(
 				`[${Date.now()}]Cache exceeded its limit, sucessfuly cleared ${firstKey}`,
@@ -41,7 +41,8 @@ export async function getWeather(cityName) {
 		url.searchParams.set('q', cityName)
 
 		const response = await fetch(url.toString())
-		if (!response.ok) throw new Error('Failed to fetch weather data.')
+		if (!response.ok)
+			throw new Error(`Failed to fetch weather data. Status code: ${response.status}`)
 
 		const data = await response.json()
 
@@ -56,6 +57,6 @@ export async function getWeather(cityName) {
 
 		return data
 	} catch (errorMessage) {
-		throw new Error(errorMessage)
+		throw Error(errorMessage)
 	}
 }
